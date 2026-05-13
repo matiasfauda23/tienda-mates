@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 
@@ -19,12 +20,12 @@ export default async function ProductoPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <a
+        <Link
           href="/"
           className="inline-flex items-center text-emerald-600 hover:text-emerald-700 mb-8 font-medium"
         >
           ← Volver al catálogo
-        </a>
+        </Link>
 
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-6">
