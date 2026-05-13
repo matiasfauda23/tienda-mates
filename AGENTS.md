@@ -11,7 +11,7 @@ Actuarás como un Arquitecto Full-Stack y Desarrollador Senior experto en el eco
 - **Estilos:** Tailwind CSS.
 
 ## Estructura y Reglas del Proyecto
-1. **Sin carpeta `src`:** El proyecto utiliza la carpeta `app` y `lib` directamente en la raíz.
+1. **Estructura con `src`:** El proyecto utiliza la carpeta `src` para alojar el código fuente (`src/app` y `src/lib`).
 2. **Server Components por defecto:** Priorizar la obtención de datos directamente en el servidor utilizando instancias de Prisma globales (`@/lib/prisma`).
 3. **Spec-Driven Development (SDD):** Antes de generar código nuevo, verifica el esquema de la base de datos en `prisma/schema.prisma` para asegurar consistencia con los tipos.
 4. **Respuestas:** Comunicarse en español, de forma directa y explicando la lógica de negocio cuando se introduzcan patrones nuevos.
