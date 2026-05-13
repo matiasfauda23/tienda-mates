@@ -1,81 +1,76 @@
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+import { prisma } from "@/lib/prisma"
+import { notFound } from "next/navigation"
+import Link from "next/link"
 
-interface PageProps {
-  params: Promise<{ slug: string }>
-}
-
-export default async function ProductoPage({ params }: PageProps) {
+// 1. Tipamos params como una Promesa (Estándar Next.js 15+)
+export default async function ProductoDetalle({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }> 
+}) {
+  // 2. Desempaquetamos el slug usando await
   const { slug } = await params
 
+  // 3. Buscamos el producto en la DB pasándole el slug ya resuelto
   const producto = await prisma.producto.findUnique({
     where: { slug },
   })
 
-  if (!producto) {
-    notFound()
-  }
+  // 4. Si no existe, mandamos al 404 de Next.js
+  if (!producto) notFound()
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <main className="min-h-screen bg-white p-8">
       <div className="max-w-4xl mx-auto">
-        <Link
-          href="/"
-          className="inline-flex items-center text-emerald-600 hover:text-emerald-700 mb-8 font-medium"
-        >
+        {/* Botón para volver */}
+        <Link href="/" className="text-emerald-600 hover:underline mb-8 inline-block font-medium">
           ← Volver al catálogo
         </Link>
 
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-6">
-            <h1 className="text-3xl font-bold text-white">{producto.nombre}</h1>
-            <p className="text-emerald-100 mt-2">Mate premium</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          {/* Imagen del Producto */}
+          <div>
+            {producto.fotos && producto.fotos.length > 0 ? (
+              <img 
+                src={producto.fotos[0]} 
+                alt={producto.nombre} 
+                className="w-full h-[500px] object-cover rounded-2xl shadow-lg"
+              />
+            ) : (
+              <div className="w-full h-[500px] bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 border-2 border-dashed">
+                Sin imagen disponible
+              </div>
+            )}
           </div>
 
-          <div className="p-8">
-            <div className="flex flex-col md:flex-row gap-8">
-              <div className="flex-1">
-                <div className="bg-gray-100 rounded-xl h-64 flex items-center justify-center">
-                  <span className="text-gray-400 text-lg">Imagen del producto</span>
-                </div>
-              </div>
-
-              <div className="flex-1 space-y-6">
-                <div className="border-b border-gray-100 pb-6">
-                  <p className="text-sm text-gray-500 mb-1">Precio</p>
-                  <p className="text-4xl font-bold text-emerald-600">
-                    ${producto.precio.toLocaleString('es-AR')}
-                  </p>
-                </div>
-
-                <div className="border-b border-gray-100 pb-6">
-                  <p className="text-sm text-gray-500 mb-1">Stock disponible</p>
-                  <p className={`text-2xl font-semibold ${producto.stock > 0 ? 'text-gray-900' : 'text-red-500'}`}>
-                    {producto.stock > 0 ? `${producto.stock} unidades` : 'Sin stock'}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm text-gray-500 mb-2">Descripción</p>
-                  <p className="text-gray-700 leading-relaxed">{producto.descripcion}</p>
-                </div>
-
-                <button
-                  className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${
-                    producto.stock > 0
-                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md hover:shadow-lg'
-                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  }`}
-                  disabled={producto.stock === 0}
-                >
-                  {producto.stock > 0 ? 'Agregar al carrito' : 'Sin stock disponible'}
-                </button>
-              </div>
+          {/* Información del Producto */}
+          <div className="flex flex-col justify-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">{producto.nombre}</h1>
+            <p className="text-3xl font-semibold text-emerald-600 mb-6">
+              ${producto.precio.toLocaleString('es-AR')}
+            </p>
+            
+            <div className="prose prose-slate mb-8">
+              <h3 className="text-lg font-medium text-gray-700 mb-2">Descripción</h3>
+              <p className="text-gray-600 leading-relaxed">
+                {producto.descripcion}
+              </p>
             </div>
+
+            <div className="flex items-center gap-4 mb-8">
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                producto.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+              }`}>
+                {producto.stock > 0 ? `Stock disponible: ${producto.stock}` : 'Sin stock'}
+              </span>
+            </div>
+
+            <button className="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-md">
+              Agregar al carrito
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }
